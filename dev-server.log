@@ -1,19 +1,25 @@
-
+﻿
 > r6hub@0.1.0 dev
 > next dev
 
-⚠ Port 3000 is in use by process 1464, using available port 3001 instead.
-▲ Next.js 16.2.6 (Turbopack)
+node.exe : ÔÜá Port 3000 is in use by process 9164, using available port 3001 instead.
+In C:\Program Files\nodejs\npm.ps1:30 car:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ÔÜá Port 3000 i...t 3001 instead.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Ôû▓ Next.js 16.2.6 (Turbopack)
 - Local:         http://localhost:3001
-- Network:       http://192.168.1.79:3001
+- Network:       http://192.168.1.62:3001
 - Environments: .env.local
-✓ Ready in 628ms
-⨯ Another next dev server is already running.
+Ô£ô Ready in 610ms
+Ô¿» Another next dev server is already running.
 
 - Local:        http://localhost:3000
-- PID:          1464
+- PID:          9164
 - Dir:          C:\Projects\r6Hub
 - Log:          .next\dev\logs\next-development.log
 
-Run taskkill /PID 1464 /F to stop it.
+Run taskkill /PID 9164 /F to stop it.
 [?25h
