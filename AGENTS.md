@@ -4,6 +4,8 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+# Local Project Info
+Questo e' un side-project dove l'utente non deve mettere mano nel 99% dei casi, la maggiorparte del lavoro deve farla l'agente
 <!-- BEGIN:agent-rules -->
 # DELEGA SEMPRE AI SUBAGENTS
 - **SEMPRE** delegare il lavoro ai subagents disponibili
@@ -70,3 +72,29 @@ When searching the codebase, use the knowledge graph as primary source:
 2. Use `grep` on `graphify-out/graph.json` to find specific nodes, edges, and source files
 3. Use `graphify query "<question>"` if you have shell access, otherwise query the JSON directly
 4. Only fall back to raw `grep` across source files if the graph has no relevant entries
+
+## Browser Testing (agent-browser)
+
+**IMPORTANTE**: Avviare sempre agent-browser con init script per bypassare dialog nativi:
+
+```bash
+agent-browser --init-script test-scripts/confirm-bypass.js open http://localhost:3000
+```
+
+Lo script `test-scripts/confirm-bypass.js` bypassa `confirm()`, `alert()`, `prompt()` che altrimenti bloccano agent-browser.
+
+### Setup Infrastruttura Locale
+
+- **Supabase self-hosted**: `docker compose --env-file .env.supabase up -d`
+- **Migrations**: `.\scripts\apply-migrations.ps1` (tracking con tabella `schema_migrations`)
+- **Dev server**: `npm run dev` su `localhost:3000`
+- **Email test**: Mailpit su `localhost:8025` (API: `/api/v1/messages`)
+- **Studio DB**: `localhost:54322` (user: supabase, pass: vedi `.env.supabase`)
+
+### Flow Login Test
+
+1. Fill email con JS injection (React non accetta `.value = ...` diretto)
+2. Click "Send Magic Link"
+3. Leggi email da Mailpit API
+4. Estrai magic link da HTML
+5. Naviga link per completare auth
