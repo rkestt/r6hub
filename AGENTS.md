@@ -55,23 +55,47 @@ Caricare una skill con: `skill` tool quando il task matcha.
 
 ## graphify
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+This project has a knowledge graph at `graphify-out/` with god nodes, community structure, and cross-file relationships.
 
-When the user types `/graphify`, invoke the `skill` tool with `skill: "graphify"` before doing anything else.
+### Configurazione Provider LLM
 
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+- **Backend**: `opencode-go` (custom provider)
+- **Modello**: `deepseek-v4-flash`
+- **Base URL**: `https://opencode.ai/zen/go/v1`
+- **Config**: `~/.graphify/providers.json`
+- **Env var**: `OPENCODE_GO_API_KEY`
 
-### For @explorer
-When searching the codebase, use the knowledge graph as primary source:
-1. Read `graphify-out/GRAPH_REPORT.md` to identify relevant communities and god nodes
-2. Use `grep` on `graphify-out/graph.json` to find specific nodes, edges, and source files
-3. Use `graphify query "<question>"` if you have shell access, otherwise query the JSON directly
-4. Only fall back to raw `grep` across source files if the graph has no relevant entries
+### Comandi Graphify
+
+| Comando | Uso | Costo |
+|---------|-----|-------|
+| `graphify update .` | Aggiorna grafo dopo modifiche codice (AST-only) | Gratis |
+| `graphify extract . --backend opencode-go --model deepseek-v4-flash` | Estrazione semantica completa (docs, immagini) | Incluso nel piano Go |
+| `graphify cluster-only . --backend opencode-go` | Rinomina community e rigenera report | Incluso nel piano Go |
+| `graphify query "<domanda>"` | Query mirata sul grafo | Gratis |
+| `graphify path "<A>" "<B>"` | Relazioni tra due nodi | Gratis |
+| `graphify explain "<concetto>"` | Spiegazione concetto | Gratis |
+
+### Workflow
+
+1. **Dopo modifiche codice**: `graphify update .` (sempre, gratis)
+2. **Dopo aggiunta docs/immagini**: `graphify extract . --backend opencode-go --model deepseek-v4-flash` (richiede `OPENCODE_GO_API_KEY`)
+3. **Per domande sul codebase**: prima `graphify query`, poi grep solo se necessario
+
+### Regole
+
+- Per domande sul codebase, usa prima `graphify query "<question>"` - restituisce subgrafo scoped, molto più piccolo di GRAPH_REPORT.md
+- Se `graphify-out/wiki/index.md` esiste, usalo per navigazione ampia
+- Leggi `graphify-out/GRAPH_REPORT.md` solo per review architettura ampia
+- Dopo modifiche codice, esegui `graphify update .` per mantenere il grafo attuale
+
+### Per @explorer
+
+Quando cerchi nel codebase, usa il knowledge graph come fonte primaria:
+1. Leggi `graphify-out/GRAPH_REPORT.md` per identificare community e god nodes rilevanti
+2. Usa `grep` su `graphify-out/graph.json` per nodi, edges, file sorgente specifici
+3. Usa `graphify query "<question>"` se hai shell access
+4. Solo se il grafo non ha entry rilevanti, usa `grep` sui file sorgente
 
 ## Browser Testing (agent-browser)
 
